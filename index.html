@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Arcano del día</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Nunito+Sans:wght@400;600&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+  <h1>Arcano del día</h1>
+  <p class="sub" id="sub"></p>
+  <div class="card"><div id="card"></div></div>
+  <ul class="clues" id="clues"></ul>
+  <div id="play">
+    <div class="row"><select id="sel" aria-label="Elige un arcano"></select><button id="go">Adivinar</button></div>
+    <div id="misses"></div>
+  </div>
+  <div id="end"></div>
+  <p class="stats" id="stats"></p>
+</main>
+<script src="cards.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
