@@ -1,6 +1,6 @@
 # Arcano del día
 
-Juego diario para aprender el tarot. Cada día hay una carta secreta entre las **78 del mazo**, tienes 6 intentos y cada fallo revela una pista.
+Juego diario para aprender el tarot. Cada día hay una carta secreta entre las **78 del mazo**, tienes 5 intentos y cada fallo revela una pista.
 
 ## Uso
 
@@ -15,9 +15,9 @@ Abre `index.html` en el navegador. No necesita instalación ni dependencias.
 ## Estructura
 
 - `index.html`: estructura de la página
-- `style.css`: estilos (modo claro y oscuro)
+- `style.css`: estilos (tema morado + naranja por defecto, claro opcional)
 - `cards.js`: los datos de las 78 cartas
-- `script.js`: lógica del juego
+- `script.js`: lógica del juego y del cambio de tema
 
 ## Cómo están modeladas las cartas
 
@@ -29,7 +29,7 @@ solo lo que no se deduce (palabras clave, escena y significado).
 carta menor = rango ("qué pasa")  ×  palo ("dónde pasa")
 ```
 
-- **Rango**: As = semilla · 2 = dualidad · 5 = crisis · 10 = cierre · Sota/Caballo/Reina/Rey = grados de dominio.
+- **Rango**: As = semilla · 2 = dualidad · 5 = crisis · 10 = cierre · Paje, Caballo, Reina y Rey = grados de dominio (11 a 14).
 - **Palo**: Bastos = acción/fuego · Copas = emoción/agua · Espadas = mente/aire · Oros = materia/tierra.
 
 Así el juego puede enseñar el sistema: *5 de Copas* = crisis + emoción = pérdida
@@ -37,14 +37,31 @@ emocional. Al resolver una carta menor, el panel final muestra esa descomposici�
 
 Las palabras clave de cada carta son una propuesta; ajústalas a tu escuela o mazo.
 
-## Pistas (de general a concreta)
+## Pistas (de la emoción a la estructura)
 
-1. Categoría (Mayor / Menor)
-2. Palo y su dominio, o elemento y astro
-3. Rango o mitad del viaje
-4. Una palabra clave
-5. Escena (la pista mnemotécnica)
-6. Numeral o paridad
+La escalera es la misma para Mayores y Menores, y son cinco:
+
+1. **Dominio** — la mitad emocional del símbolo, lo que va tras el guion (*agua, emoción, vínculo e intuición*).
+2. **Símbolo** — el objeto que la encarna (*la copa*, *la espada*, *el basto*, *el oro*) o el elemento, en Mayores.
+3. **Palabra clave** — el significado.
+4. **Ambiente** — la situación y la emoción, sin nombrar el objeto del palo ni la cantidad (campo `AMB`).
+5. **Posición** — el tramo (0–VII / VIII–XIV / XV–XXI) o el rango (As–5, 6–10, corte).
+
+El **dominio** y el **símbolo** son las dos mitades de la misma correspondencia: primero
+el agua y lo que significa, después la copa que la representa. La **posición** va al
+final porque es la última muleta, no la primera: el número exacto no se dice nunca, se
+deduce del significado y del ambiente.
+
+La escena literal del Rider-Waite ya no gasta pista: se muestra al resolver, junto al
+significado. La descomposición del Menor (Cinco = crisis) y el astro del Mayor también
+salen en el panel de resultado.
+
+La escena literal del Rider-Waite ya no gasta pista: se muestra al resolver, junto al
+significado. La descomposición del Menor (Cinco = crisis) y el astro del Mayor también
+salen en el panel de resultado.
+
+El elemento de los Mayores usa la atribución de la Golden Dawn, simplificada a
+los cuatro elementos. Si tu escuela usa otra, se cambia en `MAJOR_ELEMENT`.
 
 ## Ideas para ampliar
 

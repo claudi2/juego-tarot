@@ -1,4 +1,4 @@
-var KEY = "arcano-v2", MAX = 6, mode = "daily";
+var KEY = "arcano-v2", MAX = 5, mode = "daily";
 var target = null, guesses = [];
 var S = { played: 0, wins: 0, streak: 0, last: -9, today: null };
 
@@ -16,33 +16,32 @@ function dailyTarget() { return CARDS[(DAY * 7 + 3) % CARDS.length].id; }
 function $(i) { return document.getElementById(i); }
 function done() { return guesses.indexOf(target) > -1 || guesses.length >= MAX; }
 
-// Seis pistas, de más general a más concreta. Cada una recorta el espacio
-// de búsqueda a la mitad, y las de significado enseñan antes que las de trivia.
+// Cinco pistas. El orden va de la emoción a la estructura:
+//   dominio -> símbolo -> significado -> ambiente -> posición
+// La posición (el tramo o el rango) va al final: es la última muleta, no la
+// primera. El número exacto no se dice nunca; se deduce del significado.
+function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
 function clues(c) {
   if (c.arc === "mayor") {
     return [
-      ["Categoría", "Arcano Mayor (22 cartas)"],
-      ["Elemento o astro", c.meta],
-      ["Posición", c.n <= 10 ? "Primera mitad del viaje (0–X)" : "Segunda mitad del viaje (XI–XXI)"],
+      ["Dominio", cap(ELEMENTS[c.el].tema)],
+      ["Símbolo", ELEMENTS[c.el].name],
       ["Palabra clave", c.kw[0]],
-      ["Escena", c.scene],
-      ["Numeral", "Su número romano empieza por «" + c.roman.charAt(0) + "» y tiene " +
-        c.roman.length + (c.roman.length === 1 ? " signo" : " signos")]
+      ["Ambiente", c.amb],
+      ["Posición", c.n <= 7 ? "Entre el 0 y el VII" : c.n <= 14 ? "Entre el VIII y el XIV" : "Entre el XV y el XXI"]
     ];
   }
-  var rank = RANKS[c.n - 1];
-  var last = c.court
-    ? ["Rango", "Su rango tiene " + rank.name.length + " letras"]
-    : ["Número", "Es un número " + (c.n % 2 === 0 ? "par" : "impar")];
+  var suit = SUITS[c.suit];
+  var pos = c.court
+    ? (c.n <= 12 ? "Corte: Paje o Caballo" : "Corte: Reina o Rey")
+    : (c.n <= 5 ? "Pip del As al 5" : "Pip del 6 al 10");
   return [
-    ["Categoría", "Arcano Menor (56 cartas)"],
-    ["Palo", SUITS[c.suit].name + " · " + SUITS[c.suit].el + " — " + SUITS[c.suit].dom],
-    ["Rango", c.court
-      ? "Es una carta de corte. " + (c.n <= 12 ? "Sota o Caballo" : "Reina o Rey")
-      : "Es un pip, del As al 10. " + (c.n <= 5 ? "Entre el As y el 5" : "Entre el 6 y el 10")],
+    ["Dominio", cap(suit.el) + ", " + suit.dom],
+    ["Símbolo", cap(suit.sym)],
     ["Palabra clave", c.kw[0]],
-    ["Escena", c.scene],
-    last
+    ["Ambiente", c.amb],
+    ["Posición", pos]
   ];
 }
 
@@ -70,7 +69,7 @@ function render() {
   var cl = clues(c), shown = fin ? MAX : guesses.length + 1, h = "";
 
   $("sub").textContent = mode === "daily"
-    ? "Una carta del tarot cada día. Tienes 6 intentos y cada fallo revela una pista."
+    ? "Una carta del tarot cada día. Tienes 5 intentos y cada fallo revela una pista."
     : "Modo práctica: no cuenta para tu racha.";
 
   for (var k = 0; k < MAX; k++) {
@@ -101,6 +100,8 @@ function render() {
       sys = '<p class="sys"><b>Cómo se compone:</b> ' + RANKS[c.n - 1].name +
         " = " + RANKS[c.n - 1].core + " · " + SUITS[c.suit].name +
         " = " + SUITS[c.suit].dom + ".</p>";
+    } else {
+      sys = '<p class="sys"><b>Correspondencia:</b> ' + c.meta + ".</p>";
     }
     e = '<div class="res' + (won ? " win" : "") + '"><h2>' +
       (won ? "¡Lo tienes en " + guesses.length + (guesses.length === 1 ? " intento!" : " intentos!")
@@ -115,6 +116,7 @@ function render() {
   if (b) b.onclick = practice;
 
   $("stats").textContent = "Partidas: " + S.played + " · Aciertos: " + S.wins + " · Racha: " + S.streak;
+  $("ver").textContent = "v2 · " + CARDS.length + " cartas";
 }
 
 function guess() {
@@ -145,6 +147,28 @@ function practice() {
 
 $("go").onclick = guess;
 $("sel").addEventListener("keydown", function (ev) { if (ev.key === "Enter") guess(); });
+
+// Tema: morado + naranja por defecto (el que se veía de noche),
+// con botón para cambiar a claro. La elección se recuerda.
+var TK = "arcano-theme";
+function applyTheme(t) {
+  document.documentElement.setAttribute("data-theme", t);
+  var b = $("theme");
+  if (!b) return;
+  b.textContent = t === "dark" ? "☀" : "☾";
+  b.setAttribute("aria-label", t === "dark" ? "Cambiar a tema claro" : "Cambiar a tema oscuro");
+}
+(function () {
+  var saved = null;
+  try { saved = localStorage.getItem(TK); } catch (e) {}
+  applyTheme(saved === "light" ? "light" : "dark");
+  var b = $("theme");
+  if (b) b.onclick = function () {
+    var next = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+    applyTheme(next);
+    try { localStorage.setItem(TK, next); } catch (e) {}
+  };
+})();
 
 ld();
 target = dailyTarget();

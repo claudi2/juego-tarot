@@ -32,10 +32,10 @@ var MAJORS = [
 ];
 
 var SUITS = {
-  bastos:  {name:"Bastos",  el:"Fuego",  dom:"acción, voluntad y creatividad"},
-  copas:   {name:"Copas",   el:"Agua",   dom:"emoción, vínculo e intuición"},
-  espadas: {name:"Espadas", el:"Aire",   dom:"mente, palabra y conflicto"},
-  oros:    {name:"Oros",    el:"Tierra", dom:"cuerpo, trabajo y recursos"}
+  bastos:  {name:"Bastos",  el:"Fuego",  dom:"acción, voluntad y creatividad", sym:"el basto"},
+  copas:   {name:"Copas",   el:"Agua",   dom:"emoción, vínculo e intuición",   sym:"la copa"},
+  espadas: {name:"Espadas", el:"Aire",   dom:"mente, palabra y conflicto",     sym:"la espada"},
+  oros:    {name:"Oros",    el:"Tierra", dom:"cuerpo, trabajo y recursos",     sym:"el oro"}
 };
 
 // El rango es la mitad del sistema: lo que está pasando.
@@ -50,11 +50,24 @@ var RANKS = [
   {n:8,  name:"Ocho",    core:"el movimiento y el progreso"},
   {n:9,  name:"Nueve",   core:"la plenitud, el casi-final"},
   {n:10, name:"Diez",    core:"la culminación y el cierre del ciclo"},
-  {n:11, name:"Sota",    core:"el aprendiz, el mensajero", court:true},
+  {n:11, name:"Paje",    core:"el aprendiz, el mensajero", court:true},
   {n:12, name:"Caballo", core:"el que actúa y busca", court:true},
   {n:13, name:"Reina",   core:"el dominio interno", court:true},
   {n:14, name:"Rey",     core:"el dominio externo", court:true}
 ];
+
+// Elemento de cada Arcano Mayor (atribución Golden Dawn, simplificada).
+// Se usa para la primera pista: el "tema" emocional de la carta.
+var MAJOR_ELEMENT = ["aire","aire","agua","tierra","fuego","tierra","aire","agua","fuego","tierra",
+                     "fuego","aire","agua","agua","fuego","tierra","fuego","aire","agua","fuego","fuego","tierra"];
+var SUIT_ELEMENT = { bastos: "fuego", copas: "agua", espadas: "aire", oros: "tierra" };
+
+var ELEMENTS = {
+  fuego:  { name: "Fuego",  tema: "el impulso de actuar: ganas, coraje y deseo" },
+  agua:   { name: "Agua",   tema: "lo que sientes: amor, miedo e intuición" },
+  aire:   { name: "Aire",   tema: "la mente: ideas, palabras y conflictos" },
+  tierra: { name: "Tierra", tema: "lo concreto: cuerpo, trabajo y seguridad" }
+};
 
 // [palo, rango, palabras clave, escena, significado]
 var MINORS = [
@@ -123,13 +136,106 @@ var MINORS = [
   ["oros",14,["prosperidad","solidez","gestión"],"Un rey en su trono con una moneda y un cetro, rodeado de vides","Administrar con solidez y disfrutar de lo logrado."]
 ];
 
+// Descripción de "ambiente" para la pista 1: sugiere la situación y la emoción,
+// pero NO nombra el objeto del palo ni la cantidad. Así el símbolo (pista 2)
+// aporta información de verdad y la escena literal queda para la pista 5.
+var AMB = {
+  // Mayores
+  "m0":  "Alguien da un paso al vacío con la mirada alegre y una flor en la mano.",
+  "m1":  "Una figura señala el cielo y la tierra: todo lo que necesita ya está sobre la mesa.",
+  "m2":  "Una mujer serena guarda un libro cerrado entre dos columnas y un velo.",
+  "m3":  "Una mujer con corona de estrellas descansa en un campo que ya ha dado fruto.",
+  "m4":  "Un anciano severo se sienta en un trono de piedra y sostiene el mando.",
+  "m5":  "Un maestro bendice a quienes escuchan y les entrega unas llaves.",
+  "m6":  "Dos personas se eligen bajo la mirada de un ángel y un paisaje abierto.",
+  "m7":  "Un conductor avanza sin riendas, guiando dos fuerzas que tiran en distinto sentido.",
+  "m8":  "Una mujer cierra la boca de una fiera con las manos, sin violencia.",
+  "m9":  "Un anciano solitario sube a lo alto con una luz pequeña en la mano.",
+  "m10": "Una gran rueda gira y arrastra consigo a todas las figuras que la rodean.",
+  "m11": "Una figura sostiene una balanza y un filo, y mira de frente sin titubear.",
+  "m12": "Alguien cuelga cabeza abajo, tranquilo, con el rostro iluminado.",
+  "m13": "Un jinete oscuro avanza sin prisa mientras a su paso todo se detiene.",
+  "m14": "Un ángel equilibra dos líquidos con paciencia, con un pie dentro del agua.",
+  "m15": "Dos figuras permanecen atadas por cadenas flojas ante una sombra con cuernos.",
+  "m16": "Un rayo parte un edificio y dos figuras caen al vacío.",
+  "m17": "Una mujer derrama agua bajo el cielo abierto, después de la tormenta.",
+  "m18": "Dos animales aúllan a lo alto mientras algo emerge del agua en la oscuridad.",
+  "m19": "Un niño monta un animal claro bajo un cielo limpio, entre flores altas.",
+  "m20": "Una trompeta suena desde lo alto y las figuras se levantan de sus tumbas.",
+  "m21": "Una figura danza dentro de una corona de hojas, rodeada de testigos.",
+
+  // Bastos
+  "bastos-1":  "Una mano aparece entre las nubes y ofrece un brote verde; al fondo, un castillo.",
+  "bastos-2":  "Alguien contempla un mapa del mundo y decide por dónde empezar.",
+  "bastos-3":  "Una figura mira barcos alejarse desde un acantilado: lo sembrado ya navega.",
+  "bastos-4":  "Una pareja celebra bajo un palio de flores, en un hogar que empieza a serlo.",
+  "bastos-5":  "Varias personas discuten y se empujan sin orden, cada una con su razón.",
+  "bastos-6":  "Un jinete coronado avanza entre una multitud que lo aclama.",
+  "bastos-7":  "Alguien defiende una altura con lo que tiene, mientras otros intentan subir.",
+  "bastos-8":  "Todo cruza el aire a gran velocidad, como mensajes que no esperan.",
+  "bastos-9":  "Un herido se apoya en lo que queda en pie y vigila el horizonte, cansado.",
+  "bastos-10": "Alguien avanza encorvado bajo un peso enorme, con el pueblo aún lejos.",
+  "bastos-11": "Un joven observa con curiosidad una pequeña criatura que se le acerca.",
+  "bastos-12": "Un jinete se lanza al galope, con más pasión que control.",
+  "bastos-13": "Una mujer sentada sostiene una flor alta y mira de frente con calidez.",
+  "bastos-14": "Un hombre maduro ocupa su trono, con una criatura de fuego a sus pies.",
+
+  // Copas
+  "copas-1":  "Una mano entre las nubes ofrece algo que se desborda sobre el agua.",
+  "copas-2":  "Una pareja se mira y brinda, reconociéndose como iguales.",
+  "copas-3":  "Un grupo celebra en corro, entre frutas y risas compartidas.",
+  "copas-4":  "Alguien sentado bajo un árbol aparta la vista de lo que se le ofrece.",
+  "copas-5":  "Una figura de espaldas contempla lo que ha caído; a su lado aún queda algo en pie.",
+  "copas-6":  "Un niño ofrece algo a otro en un jardín, entre ecos de otra época.",
+  "copas-7":  "Varias imágenes brillan en el aire: castillos, joyas, una corona y un peligro.",
+  "copas-8":  "Alguien da la espalda a lo que ya no le llena y camina hacia las montañas.",
+  "copas-9":  "Una persona se sienta tranquila ante lo que ha deseado y por fin tiene.",
+  "copas-10": "Una familia celebra bajo un arcoíris, en una casa emocional en paz.",
+  "copas-11": "Un joven mira con sorpresa algo que asoma y se mueve, junto al mar.",
+  "copas-12": "Un jinete avanza despacio, ofreciendo algo con cuidado, como quien se declara.",
+  "copas-13": "Una mujer sentada junto al agua sostiene algo cerrado y escucha más de lo que habla.",
+  "copas-14": "Un hombre sereno flota sobre el mar sin perder el mando de sí mismo.",
+
+  // Espadas
+  "espadas-1":  "Una mano alza un filo recto por encima de las nubes, con una corona al frente.",
+  "espadas-2":  "Alguien con los ojos vendados cruza los brazos sobre el pecho y no decide.",
+  "espadas-3":  "Un corazón es atravesado por varios filos bajo la lluvia.",
+  "espadas-4":  "Una figura yace tendida con los ojos cerrados: el descanso obligado.",
+  "espadas-5":  "Alguien recoge lo que otros abandonan, pero se queda solo en el campo.",
+  "espadas-6":  "Una barca cruza el agua cargada de algo que se deja atrás, con tristeza.",
+  "espadas-7":  "Alguien se aleja a escondidas llevándose lo que no es suyo.",
+  "espadas-8":  "Una figura atada y con los ojos vendados se cree rodeada por todos lados.",
+  "espadas-9":  "Alguien se despierta en la cama y se cubre la cara: el miedo no deja dormir.",
+  "espadas-10": "Un cuerpo yace en el suelo bajo un cielo negro, sin nada que perder.",
+  "espadas-11": "Un joven vigila atento con un filo en la mano, aprendiendo a mirar.",
+  "espadas-12": "Un jinete carga a toda velocidad, decidido y sin mirar atrás.",
+  "espadas-13": "Una mujer sostiene un filo con una mano y tiende la otra, sin crueldad.",
+  "espadas-14": "Un hombre en el trono juzga con la mirada firme y un filo en la mano.",
+
+  // Oros
+  "oros-1":  "Una mano ofrece algo valioso sobre un jardín que empieza a crecer.",
+  "oros-2":  "Alguien hace malabares con lo que tiene, sin perder el ritmo, mientras el mundo navega.",
+  "oros-3":  "Un artesano trabaja en una obra mientras otros revisan los planos.",
+  "oros-4":  "Alguien abraza lo que tiene y se sienta encima, con la ciudad detrás.",
+  "oros-5":  "Unas figuras caminan bajo la nieve, fuera de una luz que no las ve.",
+  "oros-6":  "Un hombre reparte con una balanza, midiendo lo que da a cada uno.",
+  "oros-7":  "Un campesino se apoya en su herramienta y contempla lo que ha crecido.",
+  "oros-8":  "Un artesano repite su oficio con atención, pieza tras pieza.",
+  "oros-9":  "Una mujer pasea por un jardín con un ave rapaz en la mano.",
+  "oros-10": "Varias generaciones se reúnen bajo un arco, con animales a los pies.",
+  "oros-11": "Un joven sostiene algo valioso entre las manos y lo estudia con humildad.",
+  "oros-12": "Un jinete avanza despacio por un campo arado, sin prisa pero sin parar.",
+  "oros-13": "Una mujer cuida un jardín y acaricia un animal pequeño a sus pies.",
+  "oros-14": "Un hombre maduro administra lo suyo entre vides, con calma y solidez."
+};
+
 // Lista unificada de 78 cartas, en orden: Mayores, Bastos, Copas, Espadas, Oros.
 var CARDS = [];
 var BY_ID = {};
 (function () {
   MAJORS.forEach(function (m) {
     CARDS.push({
-      id: "m" + m.n, arc: "mayor", n: m.n,
+      id: "m" + m.n, arc: "mayor", n: m.n, el: MAJOR_ELEMENT[m.n], amb: AMB["m" + m.n],
       numeral: ROMAN[m.n], roman: ROMAN[m.n],
       name: m.name, kw: m.kw, scene: m.scene, mean: m.mean,
       meta: m.astro
@@ -138,7 +244,7 @@ var BY_ID = {};
   MINORS.forEach(function (r) {
     var suit = SUITS[r[0]], rank = RANKS[r[1] - 1];
     CARDS.push({
-      id: r[0] + "-" + r[1], arc: "menor", suit: r[0], n: r[1],
+      id: r[0] + "-" + r[1], arc: "menor", suit: r[0], n: r[1], el: SUIT_ELEMENT[r[0]], amb: AMB[r[0] + "-" + r[1]],
       numeral: rank.court ? rank.name : ROMAN[r[1]],
       court: !!rank.court,
       name: rank.name + " de " + suit.name,
