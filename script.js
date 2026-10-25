@@ -101,6 +101,8 @@ function options() {
 
 function render() {
   var fin = done(), won = guesses.indexOf(target) > -1, c = BY_ID[target];
+  var frame = $("frame");
+  if (frame && frame.classList) frame.classList.toggle("reveal", fin);
   var cl = clues(c), shown = fin ? MAX : guesses.length + 1, h = "";
 
   $("sub").textContent = mode === "daily"
@@ -116,7 +118,9 @@ function render() {
 
   var ncls = c.court ? " small" : (c.numeral.length >= 4 ? " mid" : "");
   $("card").innerHTML = fin
-    ? '<span class="num' + ncls + '">' + c.numeral +
+    ? '<img class="cardimg" src="img/' + c.id + '.jpg" alt="' + c.name +
+      '" onerror="this.classList.add(\'hide\')">' +
+      '<span class="num' + ncls + '">' + c.numeral +
       '</span><span class="cname">' + c.name + "</span>"
     : '<span class="num">?</span>';
 
@@ -133,7 +137,9 @@ function render() {
     e = '<div class="res' + (won ? " win" : "") + '"><h2>' +
       (won ? "¡Lo tienes en " + guesses.length + (guesses.length === 1 ? " intento!" : " intentos!")
            : "Era " + c.numeral + " · " + c.name) +
-      "</h2><p><b>Significado:</b> " + c.mean + "</p>" +
+      "</h2>" +
+      (won ? '<p class="rname">' + c.numeral + " · " + c.name + "</p>" : "") +
+      "<p><b>Significado:</b> " + c.mean + "</p>" +
       '<p class="read"><b>Cómo se lee:</b> ' + c.read + "</p>" +
       '<p class="hint">Para recordarla, visualiza esta escena: ' + c.scene.toLowerCase() + ".</p>" +
       '<button id="again">Otra carta de práctica</button></div>';

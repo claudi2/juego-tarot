@@ -18,6 +18,8 @@ Abre `index.html` en el navegador. No necesita instalación ni dependencias.
 - `style.css`: estilos (tema morado + naranja por defecto, claro opcional)
 - `cards.js`: los datos de las 78 cartas
 - `script.js`: lógica del juego y del cambio de tema
+- `img/`: las 78 cartas del Rider-Waite-Smith (1909)
+- `tools/fetch-images.ps1`: descarga y reduce las imágenes
 
 ## Cómo están modeladas las cartas
 
@@ -63,6 +65,25 @@ composición de la carta (rango + palo, o arcano + elemento + astro) y la clave 
 interpretarla. Los textos viven en `READ`, en `cards.js`, y son independientes de las
 pistas: se pueden reescribir sin tocar el juego.
 
+Sobre la carta aparece la imagen real del Rider-Waite, para fijar la escena.
+
+## Imágenes
+
+Al resolver, la carta muestra el escaneo original del **Rider-Waite-Smith de 1909**
+(Pamela Colman Smith, f. 1951), en dominio público. Los archivos están en `img/`,
+nombrados con el id de la carta (`m18.jpg`, `copas-5.jpg`, ...), reducidos a 400 px
+de ancho.
+
+Para regenerarlos:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File tools/fetch-images.ps1
+```
+
+El script usa las miniaturas del CDN de Wikimedia Commons, se salta las que ya
+existen y reintenta si el servidor limita las peticiones. Si falta una imagen, la
+carta cae en el numeral y el nombre.
+
 ## Feedback de cada fallo
 
 Cada intento fallado deja una fila con tres señales, estilo Wordle:
@@ -87,4 +108,3 @@ los cuatro elementos. Si tu escuela usa otra, se cambia en `MAJOR_ELEMENT`.
 - Distractores tomados del mismo palo o de números vecinos
 - Barras de dominio por palo en lugar de solo la racha
 - Ejercicio de ordenar un palo del As al Rey
-- Imágenes de un mazo de dominio público (Rider-Waite, 1909)

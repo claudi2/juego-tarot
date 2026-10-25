@@ -7,9 +7,12 @@ main{max-width:30rem;margin:0 auto;padding:1.25rem 1rem 3rem}
 h1{font:700 1.6rem/1.2 Fraunces,Georgia,serif;margin:0 0 .15rem;letter-spacing:.01em}
 h1::after{content:"";display:block;width:3.25rem;height:2px;margin-top:.55rem;border-radius:2px;background:linear-gradient(90deg,var(--gold),var(--green))}
 .sub{color:var(--mute);margin:0 0 1.25rem}
-.card{position:relative;width:9.5rem;aspect-ratio:2/3;margin:0 auto 1.25rem;border:2px solid var(--gold);border-radius:.6rem;padding:.4rem;background:var(--panel);box-shadow:0 14px 30px -16px var(--shadow)}
+.card{position:relative;width:9.5rem;aspect-ratio:500/864;margin:0 auto 1.25rem;border:2px solid var(--gold);border-radius:.6rem;padding:.4rem;background:var(--panel);box-shadow:0 14px 30px -16px var(--shadow);transition:width .25s ease}
+.card.reveal{width:12rem}
 .card::before{content:"";position:absolute;top:-.32rem;left:50%;width:.52rem;height:.52rem;background:var(--green);transform:translateX(-50%) rotate(45deg);box-shadow:0 0 0 3px var(--bg)}
-.card>div{height:100%;border:1px solid var(--line);border-radius:.35rem;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:.5rem}
+.card>div{position:relative;height:100%;border:1px solid var(--line);border-radius:.35rem;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:.5rem;overflow:hidden}
+.cardimg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:.3rem;background:var(--panel);z-index:1}
+.cardimg.hide{display:none}
 .num{font:700 2.6rem/1 Fraunces,Georgia,serif;color:var(--gold)}
 .num.small{font-size:1.15rem;letter-spacing:.02em}
 .num.mid{font-size:1.9rem}
@@ -34,6 +37,7 @@ button:focus-visible,select:focus-visible{outline:3px solid var(--acc);outline-o
 .res{border:1px solid var(--line);background:var(--panel);border-radius:.6rem;padding:1rem;margin-top:1rem}
 .res h2{font:700 1.2rem Fraunces,Georgia,serif;margin:0 0 .4rem}
 .res.win h2{color:var(--ok)}
+.res .rname{font:700 1.05rem/1.2 Fraunces,Georgia,serif;margin:0 0 .5rem}
 .res .hint{color:var(--mute);margin:0 0 .75rem}
 .res .read{border-left:2px solid var(--green);padding-left:.7rem;margin:0 0 .85rem;line-height:1.55}
 .res .read b{color:var(--ink);font-weight:600}
