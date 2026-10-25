@@ -45,6 +45,41 @@ function clues(c) {
   ];
 }
 
+function numLabel(c) {
+  return c.arc === "mayor" ? c.roman : RANKS[c.n - 1].name;
+}
+
+// Feedback tipo Wordle para cada fallo: palo, elemento y número.
+// Verde = coincide · amarillo = misma familia (mismo elemento, distinto palo)
+// Rojo = no coincide · ↑/↓ = la carta secreta está por encima o por debajo.
+function fbRow(g, t) {
+  var palo = g.arc === "mayor" ? "Arcano Mayor" : "Palo: " + SUITS[g.suit].name;
+  var pst;
+  if (g.arc === "mayor" && t.arc === "mayor") pst = "ok";
+  else if (g.arc === "menor" && t.arc === "menor" && g.suit === t.suit) pst = "ok";
+  else if (g.el === t.el) pst = "near";
+  else pst = "no";
+
+  var est = g.el === t.el ? "ok" : "no";
+
+  var nst, ntxt, ntitle = "";
+  if (g.arc !== t.arc) {
+    nst = "off"; ntxt = "—";
+    ntitle = ' title="El número solo se compara dentro del mismo tipo"';
+  } else if (g.n === t.n) {
+    nst = "ok"; ntxt = numLabel(g);
+  } else {
+    nst = "no";
+    ntxt = numLabel(g) + (t.n > g.n ? " ↑" : " ↓");
+    ntitle = ' title="La carta secreta tiene un número ' + (t.n > g.n ? "más alto" : "más bajo") + '"';
+  }
+
+  return '<div class="fbrow"><span class="fbname">✗ ' + g.name + "</span>" +
+    '<span class="chip ' + pst + '">' + palo + "</span>" +
+    '<span class="chip ' + est + '">Elemento: ' + ELEMENTS[g.el].name + "</span>" +
+    '<span class="chip ' + nst + '"' + ntitle + ">Número: " + ntxt + "</span></div>";
+}
+
 function options() {
   var o = '<option value="">Elige una carta…</option>';
   o += '<optgroup label="Arcanos Mayores">';
@@ -85,30 +120,23 @@ function render() {
       '</span><span class="cname">' + c.name + "</span>"
     : '<span class="num">?</span>';
 
-  $("misses").innerHTML = guesses
-    .filter(function (g) { return g !== target; })
-    .map(function (g) { return '<p class="miss">✗ ' + BY_ID[g].name + "</p>"; })
-    .join("");
+  var wrong = guesses.filter(function (g) { return g !== target; });
+  $("misses").innerHTML = (wrong.length
+    ? '<p class="legend">Verde = coincide · Amarillo = misma familia · Rojo = no · ↑/↓ = la carta secreta está más arriba/abajo</p>'
+    : "") + wrong.map(function (g) { return fbRow(BY_ID[g], c); }).join("");
 
   $("play").style.display = fin ? "none" : "block";
   $("sel").innerHTML = options();
 
   var e = "";
   if (fin) {
-    var sys = "";
-    if (c.arc === "menor") {
-      sys = '<p class="sys"><b>Cómo se compone:</b> ' + RANKS[c.n - 1].name +
-        " = " + RANKS[c.n - 1].core + " · " + SUITS[c.suit].name +
-        " = " + SUITS[c.suit].dom + ".</p>";
-    } else {
-      sys = '<p class="sys"><b>Correspondencia:</b> ' + c.meta + ".</p>";
-    }
     e = '<div class="res' + (won ? " win" : "") + '"><h2>' +
       (won ? "¡Lo tienes en " + guesses.length + (guesses.length === 1 ? " intento!" : " intentos!")
            : "Era " + c.numeral + " · " + c.name) +
-      "</h2><p><b>" + c.name + "</b>: " + c.mean + "</p>" +
+      "</h2><p><b>Significado:</b> " + c.mean + "</p>" +
+      '<p class="read"><b>Cómo se lee:</b> ' + c.read + "</p>" +
       '<p class="hint">Para recordarla, visualiza esta escena: ' + c.scene.toLowerCase() + ".</p>" +
-      sys + '<button id="again">Otra carta de práctica</button></div>';
+      '<button id="again">Otra carta de práctica</button></div>';
   }
   $("end").innerHTML = e;
 

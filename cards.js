@@ -229,13 +229,105 @@ var AMB = {
   "oros-14": "Un hombre maduro administra lo suyo entre vides, con calma y solidez."
 };
 
+// Cómo se lee cada carta: la composición (rango + palo, o arcano + elemento)
+// y la clave para interpretarla. Es el texto que aparece al resolver.
+var READ = {
+  // Mayores
+  "m0":  "0 · aire · Urano: el impulso antes de saber. Se lee como permiso para empezar sin garantías.",
+  "m1":  "I · aire · Mercurio: la voluntad que reúne lo disperso. Se lee como el paso del deseo al acto.",
+  "m2":  "II · agua · Luna: lo que se sabe sin demostrarlo. Se lee como una llamada a escuchar y esperar.",
+  "m3":  "III · tierra · Venus: lo que crece cuando se cuida. Se lee como abundancia que pide tiempo y atención.",
+  "m4":  "IV · fuego · Aries: la forma que sostiene. Se lee como la necesidad de límites para que algo dure.",
+  "m5":  "V · tierra · Tauro: la tradición que enseña. Se lee como aprender de una escuela o una norma probada.",
+  "m6":  "VI · aire · Géminis: la elección que define. Se lee como un cruce donde amar y decidir son el mismo acto.",
+  "m7":  "VII · agua · Cáncer: la voluntad que avanza. Se lee como tomar las riendas de fuerzas opuestas.",
+  "m8":  "VIII · fuego · Leo: el poder que no grita. Se lee como paciencia y ternura frente a lo instintivo.",
+  "m9":  "IX · tierra · Virgo: la luz que se busca dentro. Se lee como un retiro necesario para ver claro.",
+  "m10": "X · fuego · Júpiter: el giro que no controlas. Se lee como cambio de ciclo: nada dura igual.",
+  "m11": "XI · aire · Libra: la verdad que pesa. Se lee como mirar los hechos y asumir consecuencias.",
+  "m12": "XII · agua · Neptuno: la pausa que revela. Se lee como soltar el control para ver desde otro ángulo.",
+  "m13": "XIII · agua · Escorpio: el final que abre paso. Se lee como un cierre que deja sitio a lo nuevo.",
+  "m14": "XIV · fuego · Sagitario: la mezcla justa. Se lee como encontrar la medida entre dos extremos.",
+  "m15": "XV · tierra · Capricornio: la atadura consentida. Se lee como nombrar lo que te retiene.",
+  "m16": "XVI · fuego · Marte: la verdad que derriba. Se lee como una crisis que desmonta lo falso.",
+  "m17": "XVII · aire · Acuario: la calma tras el derrumbe. Se lee como confianza que se reconstruye despacio.",
+  "m18": "XVIII · agua · Piscis: el miedo que imagina. Se lee como atravesar la duda sin confundir sentir con ser.",
+  "m19": "XIX · fuego · Sol: la claridad que muestra. Se lee como permiso para disfrutar y dejarse ver.",
+  "m20": "XX · fuego · Plutón: la llamada que despierta. Se lee como responder a lo que ya no puedes ignorar.",
+  "m21": "XXI · tierra · Saturno: el círculo que se cierra. Se lee como un logro completo que pide celebrarse.",
+
+  // Bastos
+  "bastos-1":  "As (semilla) en Bastos (acción): el impulso de empezar. Se lee como una chispa creativa que pide un primer paso.",
+  "bastos-2":  "Dos (elección) en Bastos (acción): la visión que busca rumbo. Se lee como decidir por dónde seguir antes de actuar.",
+  "bastos-3":  "Tres (crecimiento) en Bastos (acción): lo sembrado empieza a moverse. Se lee como expansión que pide paciencia.",
+  "bastos-4":  "Cuatro (estabilidad) en Bastos (acción): una base firme. Se lee como el descanso merecido tras empezar algo propio.",
+  "bastos-5":  "Cinco (crisis) en Bastos (acción): la refriega de egos. Se lee como rivalidad que dispersa la energía.",
+  "bastos-6":  "Seis (armonía) en Bastos (acción): el reconocimiento. Se lee como el esfuerzo que recibe su premio.",
+  "bastos-7":  "Siete (prueba) en Bastos (acción): defender lo ganado. Se lee como sostener la posición sin bajar la guardia.",
+  "bastos-8":  "Ocho (movimiento) en Bastos (acción): todo se acelera. Se lee como noticias y avances que no esperan.",
+  "bastos-9":  "Nueve (casi-final) en Bastos (acción): la resistencia. Se lee como cuidar lo logrado cuando queda poco.",
+  "bastos-10": "Diez (cierre) en Bastos (acción): el peso de la carga. Se lee como cumplir a costa de agotarte.",
+  "bastos-11": "Paje (aprendiz) en Bastos (acción): la curiosidad que despierta. Se lee como una chispa nueva por explorar.",
+  "bastos-12": "Caballo (impulso) en Bastos (acción): la pasión que cabalga. Se lee como actuar con entusiasmo, sin desbordarse.",
+  "bastos-13": "Reina (dominio interno) en Bastos (acción): el carisma. Se lee como liderar desde la calidez.",
+  "bastos-14": "Rey (dominio externo) en Bastos (acción): la visión que manda. Se lee como asumir el mando con criterio propio.",
+
+  // Copas
+  "copas-1":  "As (semilla) en Copas (emoción): el corazón que se abre. Se lee como el inicio de un ciclo afectivo.",
+  "copas-2":  "Dos (dualidad) en Copas (emoción): el encuentro de iguales. Se lee como un vínculo donde ambos se eligen.",
+  "copas-3":  "Tres (crecimiento) en Copas (emoción): la alegría compartida. Se lee como amistad y celebración en compañía.",
+  "copas-4":  "Cuatro (pausa) en Copas (emoción): el desencanto. Se lee como la apatía que no ve lo que sí se ofrece.",
+  "copas-5":  "Cinco (crisis) en Copas (emoción): el duelo. Se lee como la mirada atrapada en lo perdido; cuenta también lo que queda.",
+  "copas-6":  "Seis (armonía) en Copas (emoción): la nostalgia. Se lee como el pasado que vuelve y pide ser raíz, no refugio.",
+  "copas-7":  "Siete (prueba) en Copas (emoción): las fantasías. Se lee como demasiadas opciones que piden discernimiento.",
+  "copas-8":  "Ocho (movimiento) en Copas (emoción): la retirada. Se lee como dejar atrás lo que ya no llena.",
+  "copas-9":  "Nueve (plenitud) en Copas (emoción): el deseo cumplido. Se lee como disfrutar sin miedo a perderlo.",
+  "copas-10": "Diez (cierre) en Copas (emoción): la plenitud afectiva. Se lee como un hogar emocional en paz.",
+  "copas-11": "Paje (aprendiz) en Copas (emoción): la sensibilidad que despierta. Se lee como una emoción nueva.",
+  "copas-12": "Caballo (impulso) en Copas (emoción): la oferta del corazón. Se lee como un romance que avanza despacio.",
+  "copas-13": "Reina (dominio interno) en Copas (emoción): la empatía. Se lee como cuidar sin perderte en el otro.",
+  "copas-14": "Rey (dominio externo) en Copas (emoción): la serenidad. Se lee como sentir mucho y sostener el timón.",
+
+  // Espadas
+  "espadas-1":  "As (semilla) en Espadas (mente): la verdad que corta. Se lee como una claridad que pide decirse.",
+  "espadas-2":  "Dos (dualidad) en Espadas (mente): la duda. Se lee como la parálisis de no decidir, que también decide.",
+  "espadas-3":  "Tres (crecimiento) en Espadas (mente): el dolor de la verdad. Se lee como una herida que sana al nombrarse.",
+  "espadas-4":  "Cuatro (pausa) en Espadas (mente): el retiro. Se lee como un alto obligatorio para recuperar fuerzas.",
+  "espadas-5":  "Cinco (crisis) en Espadas (mente): la victoria vacía. Se lee como ganar a cualquier precio y quedarse solo.",
+  "espadas-6":  "Seis (armonía) en Espadas (mente): la travesía. Se lee como alejarse de lo que duele.",
+  "espadas-7":  "Siete (prueba) en Espadas (mente): la astucia. Se lee como actuar con sigilo, en el filo de la trampa.",
+  "espadas-8":  "Ocho (movimiento) en Espadas (mente): el encierro. Se lee como límites que parecen absolutos y no lo son.",
+  "espadas-9":  "Nueve (casi-final) en Espadas (mente): la angustia. Se lee como un miedo que vive en la cabeza.",
+  "espadas-10": "Diez (cierre) en Espadas (mente): tocar fondo. Se lee como el final que, al no dejar nada, libera.",
+  "espadas-11": "Paje (aprendiz) en Espadas (mente): la mente despierta. Se lee como observar, preguntar y aprender.",
+  "espadas-12": "Caballo (impulso) en Espadas (mente): la convicción. Se lee como actuar con decisión, sin atropellar.",
+  "espadas-13": "Reina (dominio interno) en Espadas (mente): la lucidez. Se lee como decir la verdad sin crueldad.",
+  "espadas-14": "Rey (dominio externo) en Espadas (mente): el juicio. Se lee como decidir desde la razón.",
+
+  // Oros
+  "oros-1":  "As (semilla) en Oros (materia): la oportunidad concreta. Se lee como una semilla que dará fruto si la trabajas.",
+  "oros-2":  "Dos (dualidad) en Oros (materia): el equilibrio. Se lee como sostener dos frentes sin perder el ritmo.",
+  "oros-3":  "Tres (crecimiento) en Oros (materia): el oficio reconocido. Se lee como trabajo bien hecho y en equipo.",
+  "oros-4":  "Cuatro (pausa) en Oros (materia): la posesión. Se lee como aferrarse por miedo y cerrar la puerta a lo nuevo.",
+  "oros-5":  "Cinco (crisis) en Oros (materia): la escasez. Se lee como sentirse fuera aunque la ayuda esté cerca.",
+  "oros-6":  "Seis (armonía) en Oros (materia): el intercambio. Se lee como dar y recibir con medida justa.",
+  "oros-7":  "Siete (prueba) en Oros (materia): la espera. Se lee como revisar lo sembrado y confiar en su tiempo.",
+  "oros-8":  "Ocho (movimiento) en Oros (materia): el aprendizaje. Se lee como maestría que nace de repetir.",
+  "oros-9":  "Nueve (plenitud) en Oros (materia): el disfrute. Se lee como gozar con calma lo que el esfuerzo construyó.",
+  "oros-10": "Diez (cierre) en Oros (materia): el legado. Se lee como lo construido que trasciende y se comparte.",
+  "oros-11": "Paje (aprendiz) en Oros (materia): el estudio. Se lee como aprender algo concreto con constancia.",
+  "oros-12": "Caballo (impulso) en Oros (materia): la constancia. Se lee como avanzar sin prisa, pero sin detenerse.",
+  "oros-13": "Reina (dominio interno) en Oros (materia): el cuidado. Se lee como bienestar construido en lo cotidiano.",
+  "oros-14": "Rey (dominio externo) en Oros (materia): la solidez. Se lee como administrar con criterio y disfrutar lo logrado."
+};
+
 // Lista unificada de 78 cartas, en orden: Mayores, Bastos, Copas, Espadas, Oros.
 var CARDS = [];
 var BY_ID = {};
 (function () {
   MAJORS.forEach(function (m) {
     CARDS.push({
-      id: "m" + m.n, arc: "mayor", n: m.n, el: MAJOR_ELEMENT[m.n], amb: AMB["m" + m.n],
+      id: "m" + m.n, arc: "mayor", n: m.n, el: MAJOR_ELEMENT[m.n], amb: AMB["m" + m.n], read: READ["m" + m.n],
       numeral: ROMAN[m.n], roman: ROMAN[m.n],
       name: m.name, kw: m.kw, scene: m.scene, mean: m.mean,
       meta: m.astro
@@ -244,7 +336,7 @@ var BY_ID = {};
   MINORS.forEach(function (r) {
     var suit = SUITS[r[0]], rank = RANKS[r[1] - 1];
     CARDS.push({
-      id: r[0] + "-" + r[1], arc: "menor", suit: r[0], n: r[1], el: SUIT_ELEMENT[r[0]], amb: AMB[r[0] + "-" + r[1]],
+      id: r[0] + "-" + r[1], arc: "menor", suit: r[0], n: r[1], el: SUIT_ELEMENT[r[0]], amb: AMB[r[0] + "-" + r[1]], read: READ[r[0] + "-" + r[1]],
       numeral: rank.court ? rank.name : ROMAN[r[1]],
       court: !!rank.court,
       name: rank.name + " de " + suit.name,

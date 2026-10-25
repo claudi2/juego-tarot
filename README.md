@@ -53,12 +53,28 @@ final porque es la última muleta, no la primera: el número exacto no se dice n
 deduce del significado y del ambiente.
 
 La escena literal del Rider-Waite ya no gasta pista: se muestra al resolver, junto al
-significado. La descomposición del Menor (Cinco = crisis) y el astro del Mayor también
+significado. La composición del Menor (Cinco = crisis) y el astro del Mayor también
 salen en el panel de resultado.
 
-La escena literal del Rider-Waite ya no gasta pista: se muestra al resolver, junto al
-significado. La descomposición del Menor (Cinco = crisis) y el astro del Mayor también
-salen en el panel de resultado.
+## Al resolver
+
+El panel final muestra, además del significado, un bloque **Cómo se lee**: la
+composición de la carta (rango + palo, o arcano + elemento + astro) y la clave para
+interpretarla. Los textos viven en `READ`, en `cards.js`, y son independientes de las
+pistas: se pueden reescribir sin tocar el juego.
+
+## Feedback de cada fallo
+
+Cada intento fallado deja una fila con tres señales, estilo Wordle:
+
+| Señal | Verde | Amarillo | Rojo |
+|-------|-------|----------|------|
+| **Palo** | mismo palo (o los dos Mayores) | mismo elemento, distinto palo | otra familia |
+| **Elemento** | mismo elemento | — | distinto |
+| **Número** | el mismo | — | ↑/↓ = la carta secreta está más arriba o más abajo |
+
+El número solo se compara dentro del mismo tipo: un 5 de Menor y un V de Mayor no se
+mezclan. Es la única pista direccional y sirve para acotar sin decir la carta.
 
 El elemento de los Mayores usa la atribución de la Golden Dawn, simplificada a
 los cuatro elementos. Si tu escuela usa otra, se cambia en `MAJOR_ELEMENT`.
