@@ -5,24 +5,89 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Arcano del día</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Nunito+Sans:wght@400;600&display=swap">
-<link rel="stylesheet" href="style.css?v=20">
+<link rel="stylesheet" href="style.css?v=30">
 </head>
 <body>
+<button id="help" class="helpbtn" type="button" aria-label="Cómo jugar" aria-haspopup="dialog" aria-controls="helpModal">?</button>
 <button id="theme" class="themebtn" type="button" aria-label="Cambiar a tema claro">☀</button>
 <main>
   <h1>Arcano del día</h1>
-  <p class="sub" id="sub"></p>
-  <div class="card" id="frame"><div id="card"></div></div>
-  <ul class="clues" id="clues"></ul>
-  <div id="play">
-    <div class="row"><select id="sel" aria-label="Elige un arcano"></select><button id="go">Adivinar</button></div>
-  </div>
-  <div id="misses"></div>
-  <div id="end"></div>
-  <p class="stats" id="stats"></p>
+  <nav class="tabs" role="tablist" aria-label="Modos de juego">
+    <button class="tab on" id="tabDaily" type="button" role="tab" aria-selected="true" aria-controls="daily">Diario</button>
+    <button class="tab" id="tabHand" type="button" role="tab" aria-selected="false" aria-controls="hand">En mano</button>
+  </nav>
+
+  <section id="daily" role="tabpanel" aria-labelledby="tabDaily">
+    <p class="sub" id="sub"></p>
+    <div class="card" id="frame"><div id="card"></div></div>
+    <ul class="clues" id="clues"></ul>
+    <div id="play">
+      <div class="row"><select id="sel" aria-label="Elige un arcano"></select><button id="go">Adivinar</button></div>
+    </div>
+    <div id="misses"></div>
+    <div id="end"></div>
+    <p class="stats" id="stats"></p>
+  </section>
+
+  <section id="hand" role="tabpanel" aria-labelledby="tabHand" hidden>
+    <p class="sub" id="handSub">Saca una carta de tu baraja y búscala aquí: elige el palo y el número o rango. La app no roba por ti.</p>
+    <div id="handPick">
+      <div class="hand-suits" id="handSuits" aria-label="Palo de la carta"></div>
+      <div class="hand-grid" id="handGrid"></div>
+      <p class="hand-progress" id="handProgress"></p>
+      <p class="hand-legend" id="handLegend" hidden>Verde = dominada · Amarillo = aprendiendo · Rojo = para repasar</p>
+      <button class="alt hand-review" id="handReview" type="button">Repasar pendientes</button>
+    </div>
+    <div id="handQuiz" hidden></div>
+  </section>
+
   <p class="ver" id="ver">v2 · cargando…</p>
 </main>
-<script src="cards.js?v=20"></script>
-<script src="script.js?v=20"></script>
+
+<div class="modal" id="helpModal" role="dialog" aria-modal="true" aria-labelledby="helpTitle" hidden>
+  <div class="modal-card">
+    <button class="modal-close" id="helpClose" type="button" aria-label="Cerrar la ayuda">×</button>
+    <h2 id="helpTitle">Cómo jugar</h2>
+    <p class="lead">En el <b>Diario</b>, adivina la carta secreta en <b>5 intentos</b>. En la pestaña <b>En mano</b>, saca una carta de tu baraja y trata de recordar su significado.</p>
+
+    <h3>Las 5 pistas</h3>
+    <ol>
+      <li><b>Dominio</b>: el terreno de la carta (emoción, mente, materia o acción).</li>
+      <li><b>Símbolo</b>: el objeto o elemento que la representa.</li>
+      <li><b>Palabra clave</b>: su significado central.</li>
+      <li><b>Ambiente</b>: la situación y la emoción, sin nombrar el palo ni la cantidad.</li>
+      <li><b>Posición</b>: el tramo del arcano o el rango del menor.</li>
+    </ol>
+    <p class="note">El número exacto no se dice nunca: se deduce de las pistas.</p>
+
+    <h3>El feedback</h3>
+    <p>Cada fallo deja una fila que compara <b>palo</b>, <b>elemento</b> y <b>número</b>:</p>
+    <ul class="help-fb">
+      <li><span class="chip ok">Verde</span> coincide.</li>
+      <li><span class="chip near">Amarillo</span> misma familia (elemento), distinto palo.</li>
+      <li><span class="chip no">Rojo</span> no coincide.</li>
+    </ul>
+    <p class="note">En el número, ↑ o ↓ indican que la carta secreta está más arriba o más abajo.</p>
+
+    <h3>Al resolver</h3>
+    <p>Verás el significado, <b>cómo se lee</b> la carta y su imagen real del Rider-Waite, para fijarla en la memoria.</p>
+
+    <h3>En mano</h3>
+    <p>Saca una carta física y elige su <b>palo</b> y su <b>número</b>. Piensa qué te dice antes de revelar: puedes pedir una pista (composición y palabras clave) o ver el significado completo.</p>
+    <p>Al revelar, verás una <b>lectura extendida</b> con el significado <b>al derecho</b> y <b>invertido</b>, además de contextos de <b>amor</b>, <b>amistad</b> y <b>trabajo</b>. Puedes cambiar la orientación con el selector <b>Derecho / Invertido</b>.</p>
+    <p>Después marca si la sabías: <b>la sabía</b> manda la carta a dominadas, <b>a medias</b> a aprendiendo y <b>no la sabía</b> a para repasar. La app guarda tu progreso y reúne en <b>pendientes</b> las cartas que aún no están dominadas. Los puntos del selector te dicen cómo llevas cada carta: <b>verde</b> dominada, <b>amarillo</b> aprendiendo y <b>rojo</b> para repasar.</p>
+    <p class="note">Las lecturas siguen la tradición del <i>Pictorial Key to the Tarot</i> de A. E. Waite (1911, dominio público). La redacción es propia y orientativa.</p>
+
+    <h3>Modos</h3>
+    <p><b>Diario</b>: una carta al día y una racha.</p>
+    <p><b>En mano</b>: práctica con tu baraja física, a tu ritmo, con repaso y lecturas extendidas.</p>
+
+    <button class="modal-ok" id="helpOk" type="button">Entendido</button>
+  </div>
+</div>
+
+<script src="cards.js?v=30"></script>
+<script src="meanings.js?v=30"></script>
+<script src="script.js?v=30"></script>
 </body>
 </html>

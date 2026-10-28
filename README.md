@@ -6,6 +6,12 @@ Juego diario para aprender el tarot. Cada día hay una carta secreta entre las *
 
 Abre `index.html` en el navegador. No necesita instalación ni dependencias.
 
+## Ayuda
+
+El botón `?` de la esquina abre un modal con el objetivo, las 5 pistas, el
+significado de los colores del feedback y los modos. Se cierra con la X, con
+`Esc` o haciendo clic fuera.
+
 ## Publicar con GitHub Pages
 
 1. Sube los archivos a un repositorio.
@@ -17,7 +23,8 @@ Abre `index.html` en el navegador. No necesita instalación ni dependencias.
 - `index.html`: estructura de la página
 - `style.css`: estilos (tema morado + naranja por defecto, claro opcional)
 - `cards.js`: los datos de las 78 cartas
-- `script.js`: lógica del juego y del cambio de tema
+- `meanings.js`: lecturas extendidas de las 78 cartas (derecho, invertido y contextos)
+- `script.js`: lógica del juego diario, del modo En mano y del cambio de tema
 - `img/`: las 78 cartas del Rider-Waite-Smith (1909)
 - `tools/fetch-images.ps1`: descarga y reduce las imágenes
 
@@ -67,6 +74,33 @@ pistas: se pueden reescribir sin tocar el juego.
 
 Sobre la carta aparece la imagen real del Rider-Waite, para fijar la escena.
 
+## En mano (baraja física)
+
+La pestaña **En mano** no hace tiradas online: tú sacas una carta de tu baraja y
+le dices a la app cuál es con dos toques (palo + número/rango). Entonces la app
+te propone recordar su significado antes de revelarlo.
+
+- **Pista**: muestra la composición (rango + palo, o arcano + elemento + astro)
+  y las palabras clave.
+- **Ver significado**: muestra el significado, **Cómo se lee** y una **lectura
+  extendida** con el texto al derecho y el invertido. El selector
+  **Derecho / Invertido** cambia la lectura principal.
+- **Contextos**: debajo aparecen bloques de **amor**, **amistad** y **trabajo**.
+  Cada uno incluye el matiz al derecho y el invertido en el mismo párrafo.
+- **Autoevaluación**: *La sabía* manda la carta a **dominadas**; *A medias* a
+  **aprendiendo**; *No la sabía* a **para repasar**.
+- **Progreso**: cada carta se guarda en `localStorage` (`arcano-hand`) en uno de
+  esos tres montones. El selector muestra un punto verde, amarillo o rojo según
+  el montón.
+- **Repasar pendientes**: elige al azar una carta que aún no esté dominada
+  (aprendiendo o para repasar).
+
+Las lecturas extendidas de `meanings.js` siguen la tradición de *The Pictorial
+Key to the Tarot* de A. E. Waite (1911, dominio público). La redacción es propia
+y orientativa: no reproduce el texto original.
+
+El diario sigue siendo la pestaña principal al abrir la app.
+
 ## Imágenes
 
 Al resolver, la carta muestra el escaneo original del **Rider-Waite-Smith de 1909**
@@ -102,9 +136,9 @@ los cuatro elementos. Si tu escuela usa otra, se cambia en `MAJOR_ELEMENT`.
 
 ## Ideas para ampliar
 
-- Retroalimentación tipo Wordle al fallar: palo ✓/✗ y número más alto/más bajo
-- Modo entrenamiento con repetición espaciada (cajas de Leitner), separado del diario
 - Preguntas en ambos sentidos: carta → significado y significado → carta
 - Distractores tomados del mismo palo o de números vecinos
 - Barras de dominio por palo en lugar de solo la racha
 - Ejercicio de ordenar un palo del As al Rey
+- Notas personales por carta e historial de tiradas
+- Exportar o importar el progreso de `arcano-hand`
